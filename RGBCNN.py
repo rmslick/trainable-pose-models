@@ -1,4 +1,4 @@
-from GenericMLModel import GenericMLModel
+from .GenericMLModel import GenericMLModel
 
 class RGBCNN(GenericMLModel):
     def load_data(self, path):
