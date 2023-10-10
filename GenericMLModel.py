@@ -1,8 +1,4 @@
 class GenericMLModel:
-    def __init__(self, model=None):
-        self.model = model
-        self.history = None
-
     def load_data(self, path):
         """
         Load and preprocess data from the provided path.
