@@ -110,4 +110,5 @@ y_val = np.array(y_val)
 y_test = np.array(y_test)
 
 rgbmodel = RGBCNN()
-rgbmodel.train(X_train,y_train,X_val,y_val,X_test)
+rgbmodel.train(X_train,y_train,X_val,y_val)
+rgbmodel.test(X_test,y_test)

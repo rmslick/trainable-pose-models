@@ -6,7 +6,7 @@ from keras.models import Model
 from keras.layers import Input, Dense, Dropout, Concatenate, Flatten
 from keras.applications import ResNet50
 
-class model
+class model:
     def __init__(self):
         # Ensure TensorFlow is utilizing GPU
         physical_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -51,7 +51,8 @@ class model
         final_output = Concatenate(name="6DoF_output")([translation, quaternion])
 
         # Construct the full model
-        model = Model(inputs=base_model.input, outputs=final_output)
+        m = Model(inputs=base_model.input, outputs=final_output)
+        return m
     def pose_refinement_network(self,input_shape=(224, 224, 3)):
         # Initial pose input (7D: [tx, ty, tz, qx, qy, qz, qw])
         initial_pose_input = Input(shape=(7,), name="initial_pose")
@@ -75,13 +76,10 @@ class model
         # Output layer for refined pose
         refined_pose = Dense(7, name="refined_pose")(x)
 
-        model = Model(inputs=[image_input, initial_pose_input], outputs=refined_pose)
+        m = Model(inputs=[image_input, initial_pose_input], outputs=refined_pose)
 
-        return model
+        return m
     def predict(self,x):
         pose_init = self.regression_model.predict(x)
         pose_refined = self.refinement_model.predict(x,pose_init)
         return pose_refined
-    
-print("Starting...")
-model()
