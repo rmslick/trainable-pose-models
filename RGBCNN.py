@@ -1,5 +1,13 @@
 from .GenericMLModel import GenericMLModel
 from .Model import model
+from tensorflow.keras.callbacks import Callback
+
+class StreamingCallback(Callback):
+    def on_epoch_end(self, epoch, logs=None):
+        logs = logs or {}
+        # Here you can send the metrics (in logs) to your frontend or any other destination.
+        # For example:
+        print(logs)
 class RGBCNN(GenericMLModel):
     def __init__(self):
         self.model = model()
@@ -20,14 +28,14 @@ class RGBCNN(GenericMLModel):
     def train(self, X_train, y_train, X_val=None, y_val=None, **kwargs):
         regression_history = self.model.regression_model.fit(X_train, y_train,
                     validation_data=(X_val, y_val),
-                    epochs=150, batch_size=32)
+                    epochs=150, batch_size=32,callbacks=[streaming_callback])
         # Predict the initial poses using the trained regression model
         initial_train_poses =self.model.regression_model.predict(X_train)
         initial_val_poses =self.model.regression_model.predict(X_val)
         # Train the refinement model
         refinement_history = self.model.refinement_model.fit([X_train, initial_train_poses], y_train,
                                                  validation_data=([X_val, initial_val_poses], y_val),
-                                                 epochs=50, batch_size=64)
+                                                 epochs=50, batch_size=64,callbacks=[streaming_callback])
 
     def test(self,X_test,y_test_quat):
         initial_test_poses =self.model.regression_model.predict(X_test)
