@@ -31,7 +31,7 @@ class RGBCNN(GenericMLModel):
 
     def test(self,X_test,y_test_quat):
         initial_test_poses =self.model.regression_model.predict(X_test)
-        y_pred_quat = self.refinement_model.predict([X_test, initial_test_poses])
+        y_pred_quat = self.model.refinement_model.predict([X_test, initial_test_poses])
         # Initialize lists to store errors
         trans_errors = []
         rot_errors = []
