@@ -3,14 +3,31 @@ from .Model import model
 from tensorflow.keras.callbacks import Callback
 
 class StreamingCallback(Callback):
+    def __init__(self, rgbcnn_instance):
+        super().__init__()
+        self.rgbcnn_instance = rgbcnn_instance
+
     def on_epoch_end(self, epoch, logs=None):
         logs = logs or {}
-        # Here you can send the metrics (in logs) to your frontend or any other destination.
-        # For example:
-        print(logs)
+        # Add the current epoch number to the logs
+        logs['current_epoch'] = epoch + 1  # epochs are 0-indexed, so add 1 for human readability
+
+        # Update training_epoch_count of the RGBCNN instance
+        self.rgbcnn_instance.training_epoch_count = logs['current_epoch']
+        print(">>>>>>>",self.rgbcnn_instance.training_epoch_count)
 class RGBCNN(GenericMLModel):
     def __init__(self):
         self.model = model()
+        self.training_epoch_count = 0
+
+        self.epochs_prediction = 150
+        self.batch_size_prediction = 32
+
+        self.epochs_refinement = 50
+        self.batch_size_refinement = 64
+
+        self.epochs_total = self.epochs_prediction + self.epochs_refinement
+
     def load_data(self, path):
         """
         Load and preprocess data from the provided path.
@@ -26,18 +43,19 @@ class RGBCNN(GenericMLModel):
         pass
 
     def train(self, X_train, y_train, X_val=None, y_val=None, **kwargs):
-        streaming_callback = StreamingCallback()
+        streaming_callback = StreamingCallback(self)  # pass the RGBCNN instance
         regression_history = self.model.regression_model.fit(X_train, y_train,
                     validation_data=(X_val, y_val),
                     epochs=150, batch_size=32,callbacks=[streaming_callback])
         # Predict the initial poses using the trained regression model
         initial_train_poses =self.model.regression_model.predict(X_train)
         initial_val_poses =self.model.regression_model.predict(X_val)
+
         # Train the refinement model
-        streaming_callback = StreamingCallback()
+        streaming_callback2 = StreamingCallback(self)  # pass the RGBCNN instance
         refinement_history = self.model.refinement_model.fit([X_train, initial_train_poses], y_train,
                                                  validation_data=([X_val, initial_val_poses], y_val),
-                                                 epochs=50, batch_size=64,callbacks=[streaming_callback])
+                                                 epochs=50, batch_size=64,callbacks=[streaming_callback2])
 
     def test(self,X_test,y_test_quat):
         initial_test_poses =self.model.regression_model.predict(X_test)
