@@ -26,6 +26,7 @@ class RGBCNN(GenericMLModel):
         pass
 
     def train(self, X_train, y_train, X_val=None, y_val=None, **kwargs):
+        streaming_callback = StreamingCallback()
         regression_history = self.model.regression_model.fit(X_train, y_train,
                     validation_data=(X_val, y_val),
                     epochs=150, batch_size=32,callbacks=[streaming_callback])
@@ -33,6 +34,7 @@ class RGBCNN(GenericMLModel):
         initial_train_poses =self.model.regression_model.predict(X_train)
         initial_val_poses =self.model.regression_model.predict(X_val)
         # Train the refinement model
+        streaming_callback = StreamingCallback()
         refinement_history = self.model.refinement_model.fit([X_train, initial_train_poses], y_train,
                                                  validation_data=([X_val, initial_val_poses], y_val),
                                                  epochs=50, batch_size=64,callbacks=[streaming_callback])
