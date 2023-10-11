@@ -28,19 +28,23 @@ def poses_to_quaternion_format(poses):
 
     return quaternion_poses
 def load_images_from_folder(folder_path, img_size=(224, 224)):
-    """Load images from a folder and resize them."""
+    """Load images from a folder, resize them, and ignore .json files."""
 
     images = []
     image_names = sorted(os.listdir(folder_path))
 
     for image_name in image_names:
-        img_path = os.path.join(folder_path, image_name)
-        img = cv2.imread(img_path)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img, img_size)
-        images.append(img)
+        if not image_name.endswith('.json'):
+            img_path = os.path.join(folder_path, image_name)
+            img = cv2.imread(img_path)
+
+            if img is not None:  # Check if the file was a valid image format
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                img = cv2.resize(img, img_size)
+                images.append(img)
 
     return images
+
 
 def load_json(file_path):
     """Load a JSON file."""
