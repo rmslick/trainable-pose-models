@@ -5,7 +5,6 @@ from tensorflow.keras.optimizers import Adam
 from keras.models import Model
 from keras.layers import Input, Dense, Dropout, Concatenate, Flatten
 from keras.applications import ResNet50
-from tensorflow.keras.callbacks import Callback
 
 class model:
     def __init__(self):
