@@ -3,15 +3,16 @@ from .Model import model
 from tensorflow.keras.callbacks import Callback
 
 class StreamingCallback(Callback):
-    def __init__(self, rgbcnn_instance):
+    def __init__(self, rgbcnn_instance,eps = 0):
         super().__init__()
         self.rgbcnn_instance = rgbcnn_instance
-
+        self.total_eps = eps
     def on_epoch_end(self, epoch, logs=None):
+        self.total_eps += 1
         print("I AM IN CALLBACK")
         logs = logs or {}
         # Add the current epoch number to the logs
-        logs['current_epoch'] = epoch + 1  # epochs are 0-indexed, so add 1 for human readability
+        logs['current_epoch'] = self.total_eps  # epochs are 0-indexed, so add 1 for human readability
         self.rgbcnn_instance.training_epoch_count = logs['current_epoch']
         # Update training_epoch_count of the RGBCNN instance
         #self.rgbcnn_instance.training_epoch_count = logs['current_epoch']
@@ -61,7 +62,7 @@ class RGBCNN(GenericMLModel):
         initial_val_poses =self.model.regression_model.predict(X_val)
 
         # Train the refinement model
-        streaming_callback2 = StreamingCallback(self)  # pass the RGBCNN instance
+        streaming_callback2 = StreamingCallback(self,streaming_callback.total_eps)  # pass the RGBCNN instance
         refinement_history = self.model.refinement_model.fit([X_train, initial_train_poses], y_train,
                                                  validation_data=([X_val, initial_val_poses], y_val),
                                                  epochs=50, batch_size=64,callbacks=[streaming_callback2])
