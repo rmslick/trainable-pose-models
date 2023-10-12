@@ -12,14 +12,14 @@ class StreamingCallback(Callback):
         logs = logs or {}
         # Add the current epoch number to the logs
         logs['current_epoch'] = epoch + 1  # epochs are 0-indexed, so add 1 for human readability
-        self.rgbcnn_instance.training_epoch_count = logs['current_epoch'] 
+        self.rgbcnn_instance.training_epoch_count = logs['current_epoch']
         # Update training_epoch_count of the RGBCNN instance
         #self.rgbcnn_instance.training_epoch_count = logs['current_epoch']
         print(">>>>>>>",self.rgbcnn_instance.training_epoch_count,self.rgbcnn_instance.epochs_total)
         self.log(logs)
 
     def log(self, logs):
-        with open("training_stats.txt", "a") as file:
+        with open("training_stats.txt", "w") as file:
             for key, value in logs.items():
                 file.write(f"{key}: {value}\n")
             file.write("\n")  # Separate epochs with a newline for clarity
