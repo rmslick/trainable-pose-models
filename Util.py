@@ -5,7 +5,34 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 from .RGBCNN import *
 from tensorflow.keras.preprocessing import image
+import numpy as np
 
+def pose_error(gt_pose, pred_pose):
+    """
+    Calculate and print the translation and rotation error between a ground truth pose and a predicted pose.
+
+    Parameters:
+    - gt_pose: Ground truth pose as a 7D array [tx, ty, tz, qx, qy, qz, qw].
+    - pred_pose: Predicted pose as a 7D array [tx, ty, tz, qx, qy, qz, qw].
+    """
+
+    # Translation error
+    trans_error = np.linalg.norm(gt_pose[:3] - pred_pose[:3])
+
+    # Rotation error
+    q_gt = gt_pose[3:]
+    q_pred = pred_pose[3:]
+    dot_product = np.dot(q_gt, q_pred)
+
+    # Clip to ensure dot_product is within the valid range for arccos
+    dot_product = np.clip(dot_product, -1.0, 1.0)
+
+    rotation_error = 2 * np.arccos(np.abs(dot_product))
+
+    #print(f"Translation Error: {trans_error:.4f} units")
+    #print(f"Rotation Error: {rotation_error:.4f} radians")
+
+    return trans_error, rotation_error
 def get_ground_truth_pose_for_image(image_filename, json_path):
     """
     Retrieve the ground truth 6DoF pose for a given image from the LineMOD dataset.
