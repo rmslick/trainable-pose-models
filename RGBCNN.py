@@ -16,12 +16,6 @@ class StreamingCallback(Callback):
         # Update training_epoch_count of the RGBCNN instance
         self.rgbcnn_instance.training_epoch_count = logs['current_epoch']
         print(">>>>>>>",self.rgbcnn_instance.training_epoch_count,self.epochs_total)
-        #self.log(logs)
-    def log(self, logs):
-        with open("training_stats.txt", "a") as file:
-            for key, value in logs.items():
-                file.write(f"{key}: {value}\n")
-            file.write("\n")  # Separate epochs with a newline for clarity
 class RGBCNN(GenericMLModel):
     def __init__(self):
         self.model = model()
