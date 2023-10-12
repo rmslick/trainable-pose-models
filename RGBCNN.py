@@ -21,7 +21,8 @@ class StreamingCallback(Callback):
     def log(self, logs):
         with open("training_stats.txt", "w") as file:
             for key, value in logs.items():
-                file.write(f"{key}: {value}\n")
+                if str(key) == "current_epoch":
+                    file.write(f"{key},{value}")
             file.write("\n")  # Separate epochs with a newline for clarity
 class RGBCNN(GenericMLModel):
     def __init__(self):
