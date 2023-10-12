@@ -8,7 +8,7 @@ class StreamingCallback(Callback):
         self.rgbcnn_instance = rgbcnn_instance
 
     def on_epoch_end(self, epoch, logs=None):
-        pritn("I AM IN CALLBACK")
+        print("I AM IN CALLBACK")
         logs = logs or {}
         # Add the current epoch number to the logs
         logs['current_epoch'] = epoch + 1  # epochs are 0-indexed, so add 1 for human readability
