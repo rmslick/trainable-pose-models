@@ -25,15 +25,15 @@ class StreamingCallback(Callback):
                     file.write(f"{key},{value}")
             file.write("\n")  # Separate epochs with a newline for clarity
 class RGBCNN(GenericMLModel):
-    def __init__(self):
+    def __init__(self,config):
         self.model = model()
         self.training_epoch_count = 0
 
-        self.epochs_prediction = 150
-        self.batch_size_prediction = 32
+        self.epochs_prediction = config["epochs_prediction"]
+        self.batch_size_prediction = config["batch_size_prediction"]
 
-        self.epochs_refinement = 50
-        self.batch_size_refinement = 64
+        self.epochs_refinement = config["epochs_refinement"]
+        self.batch_size_refinement = config["batch_size_refinement"]
 
         self.epochs_total = self.epochs_prediction + self.epochs_refinement
 
