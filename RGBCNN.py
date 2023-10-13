@@ -1,5 +1,6 @@
 from .GenericMLModel import GenericMLModel
 from .Model import model
+from .Util import *
 from tensorflow.keras.callbacks import Callback
 
 class StreamingCallback(Callback):
